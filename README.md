@@ -155,7 +155,7 @@ Extraction for creating the 'category', 'subcategory', 'campaign', and 'contacts
     </li>
 </li>
 </ol>
-And finally, importing of the data in these newly created .csv files into the database to come was also a central part of the ETL loading process.<br><br>
+And, finally, importing of the data in these newly created .csv files into the database discussed next was also a central part of the ETL loading process.<br><br>
 
 
 ## Creating A Database From The New .CSV Data Files:
