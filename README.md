@@ -553,7 +553,7 @@ Carrying on, there are 4 more tables to show their population:<br><br>
 
 
 ## Interesting Findings Using The Alternative Database:
-Here, queries were created to answer three questions:
+Here, queries were created to answer four questions:
 <ol>
     <li>
         Which country pledged the most?
