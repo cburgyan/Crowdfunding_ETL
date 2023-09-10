@@ -530,21 +530,21 @@ Carrying on, there are 4 more tables to show their population:<br><br>
         <br>
         <br>
         <br>
-        Here's query that traverses the tables going from 'campaign' to 'subcategory_campaign' to 'subcategory' to 'subcategory_category' to 'category':
+        Here's a query that traverses the tables going from 'campaign' to 'subcategory_campaign' to 'subcategory' to 'subcategory_category' to 'category':
         <br>
         <br>
         <img src="./Database_Files/AlternativeDatabase/traverseSchemaCampaignSubcatCat.png" />
         <br>
         <br>
         <br>
-        Here's query that traverses the tables going from 'campaign' to 'category_campaign' to 'category' to 'subcategory_category' to 'subcategory':
+        Here's a query that traverses the tables going from 'campaign' to 'category_campaign' to 'category' to 'subcategory_category' to 'subcategory':
         <br>
         <br>
         <img src="./Database_Files/AlternativeDatabase/traverseSchemaCampaignCatSubcat.png" />
         <br>
         <br>
         <br>
-        Here's query that traverses the tables going from 'campaign' to 'contact_campaign' to 'contact':
+        Here's a query that traverses the tables going from 'campaign' to 'contact_campaign' to 'contact':
         <br>
         <br>
         <img src="./Database_Files/AlternativeDatabase/traverseSchemaCampaignContact.png" />
