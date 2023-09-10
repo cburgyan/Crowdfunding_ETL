@@ -161,7 +161,7 @@ Extraction for creating the 'category', 'subcategory', 'campaign', and 'contacts
 To create a database, the .csv were examined and an Entity-Relationship Diagram was synthesized which led to a schema, and database tables were constructed in postgresql, and, finally, these tables were populated with the data from the .csv files.
 <ol style='list-style-type: upper-roman;'>
     <li>
-        <strong>Inspecting The .csv Files And Creating The Schema And ERD:</strong><br>
+        <strong>Inspect The .csv Files And Create The Schema And Entity-Relationship Diagram:</strong><br>
         Inspecting the .csv files led to the synthesis of the following schema:<br><br>
 
             campaign
@@ -206,7 +206,7 @@ To create a database, the .csv were examined and an Entity-Relationship Diagram 
     </li>
     <br>
     <li>
-        <strong>Database Tables Were Constructed</strong><br>
+        <strong>Construct Database Tables:</strong><br>
         The following postgresql code was run in pgAdmin4:<br><br>
 
         --Create table schema
@@ -246,7 +246,7 @@ To create a database, the .csv were examined and an Entity-Relationship Diagram 
 <br>
     </li>
     <li>
-        <strong>Importing Data Into The Tables:</strong><br>
+        <strong>Populate The Database Tables:</strong><br>
         The following images show the queries used and the resulting data returned from the tables that were populated by importing the data from the .csv files:<br><br>
         Here's the 'contacts' table:
         <br>
