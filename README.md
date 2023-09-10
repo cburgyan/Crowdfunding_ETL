@@ -248,25 +248,28 @@ To create a database, the .csv were examined and an Entity-Relationship Diagram 
     <li>
         <strong>Populate The Database Tables:</strong><br>
         The following images show the queries used and the resulting data returned from the tables that were populated by importing the data from the .csv files:<br><br>
-        Here's the 'contacts' table:
+        Here's the populated 'contacts' table:
         <br>
         <br>
         <img src="./Database_Files/contactsTablePopulateWithData.png" />
         <br>
         <br>
-        Here's the 'category' table:
+        <br>
+        Here's the populated 'category' table:
         <br>
         <br>
         <img src="./Database_Files/categoryTablePopulateWithData.png" />
         <br>
         <br>
-        Here's the 'subcategory' table:
+        <br>
+        Here's the populated 'subcategory' table:
         <br>
         <br>
         <img src="./Database_Files/subcategoryTablePopulateWithData.png" />
         <br>
         <br>
-        Here's the 'campaign' table:
+        <br>
+        Here's the populated 'campaign' table:
         <br>
         <br>
         <img src="./Database_Files/campaignTablePopulateWithData.png" />
