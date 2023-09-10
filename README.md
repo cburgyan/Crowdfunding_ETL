@@ -278,4 +278,317 @@ To create a database, the .csv were examined and an Entity-Relationship Diagram 
 
 So, using the ETL pipeline our team took the raw .xlsx data, extracted it, transformed, and loaded it in order to create a simple and functional database in postgresql!
 
+# An Alternative, More Robust Database:
+The database created above is simple but it could be more future-proof by:
+<ol>
+    <li>
+        Allowing for a campaign to have multiple contacts.
+    </li>
+    <li>
+        Allowing for a campaign to have multiple categories.
+    </li>
+    <li>
+        Allowing for a campaign to have multiple subcategories.
+    </li>
+    <li>
+        Allowing for a subcategory to be associated with multiple categories--this seems strange at first but we could imagine, for example, a client, that's using the database, wanting the option of ascribing the subcategory "science fiction" not only to the category "film and video" (as it does in the simple database above) but also the category "publishing" because the category "publishing" already includes the subcategory "fiction".
+    </li>
+</ol>
+So, these allowances could be incorporated by making the following changes:
+<ol>
+    <li>
+        Make the relation between the campaign and contacts a many-to-many relationship.
+    </li>
+    <li>
+        Make the relation between the campaign and category a many-to-many relationship.
+    </li>
+    <li>
+        Make the relation between the campaign and subcategory a many-to-many relationship.
+    </li>
+    <li>
+        Make the relation between the subcategory and category a many-to-many relationship.
+    </li>
+</ol>
 
+## Creating A More Robust Database:
+With this goal in mind a new Entity-Relationship Diagram and schema could be created, and a new database could be populated with the data already loaded into the more simple database above.
+
+<ol style='list-style-type: upper-roman;'>
+    <li>
+        <strong>Create The Schema And Entity-Relationship Diagram:</strong><br>
+        The new specifications would create the following schema:<br><br>
+
+            campaign
+            --
+            cf_id INT PK
+            company_name VARCHAR(50)
+            description VARCHAR(225)
+            goal NUMERIC(10,2)
+            pledged NUMERIC(10,2)
+            outcome VARCHAR(50)
+            backers_count INT
+            country VARCHAR(50)
+            currency VARCHAR(50)
+            launched_date DATE
+            end_date DATE
+
+
+            category
+            --
+            category_id PK VARCHAR(50)
+            category VARCHAR(50)
+
+            category_campaign
+            --
+            category_campaign_id PK INT
+            category_id FK >- category.category_id VARCHAR(50)
+            cf_id INT FK >- campaign.cf_id
+
+
+
+            contacts
+            --
+            contact_id PK INT
+            first_name VARCHAR(50)
+            last_name VARCHAR(50)
+            email VARCHAR(50)
+
+            subcategory
+            --
+            subcategory_id PK VARCHAR(50)
+            subcategory VARCHAR(50)
+
+            subcategory_campaign
+            --
+            subcategory_campaign_id PK INT
+            subcategory_id FK >- subcategory.subcategory_id VARCHAR(50)
+            cf_id INT FK >- campaign.cf_id
+
+            contact_campaign
+            --
+            contacts_campaign_id PK INT
+            contact_id FK >- contacts.contact_id VARCHAR(50)
+            cf_id INT FK >- campaign.cf_id
+
+            subcategory_category
+            --
+            subcategory_category_id PK INT
+            category_id FK >- category.category_id VARCHAR(50)
+            subcategory_id FK >- subcategory.subcategory_id VARCHAR(50)
+
+<br>
+        which in turn leads to the following ERD built in <a href="https://www.quickdatabasediagrams.com/">QuickDatabaseDiagrams.com</a>:
+        <br>
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/Robust-QuickDBD-crowdfunding-ERD.png" />
+    </li>
+    <br>
+    <li>
+        <strong>Construct And Populate Database Tables:</strong><br>
+        The following postgresql code was run in pgAdmin4 (note that these first four create table statements are identical to those of the simple database above--this is because they will be used to populate the new tables and will also be transformed):<br><br>
+
+        --Create table schema
+        CREATE TABLE "category" (
+            "category_id" VARCHAR(50) PRIMARY KEY  NOT NULL,
+            "category" VARCHAR(50)   NOT NULL
+        );
+        CREATE TABLE "contact" (
+            "contact_id" INT PRIMARY KEY  NOT NULL,
+            "first_name" VARCHAR(50)   NOT NULL,
+            "last_name" VARCHAR(50)   NOT NULL,
+            "email" VARCHAR(50)   NOT NULL
+        );
+        CREATE TABLE "subcategory" (
+            "subcategory_id" VARCHAR(50) PRIMARY KEY NOT NULL,
+            "subcategory" VARCHAR(50)   NOT NULL
+        );
+        CREATE TABLE "campaign" (
+            "cf_id" INT PRIMARY KEY  NOT NULL,
+            "contact_id" INT   NOT NULL,
+                FOREIGN KEY (contact_id) REFERENCES contact(contact_id),
+            "company_name" VARCHAR(50)   NOT NULL,
+            "description" VARCHAR(225)   NOT NULL,
+            "goal" NUMERIC(10,2)   NOT NULL,
+            "pledged" NUMERIC(10,2)   NOT NULL,
+            "outcome" VARCHAR(50)   NOT NULL,
+            "backers_count" INT   NOT NULL,
+            "country" VARCHAR(50)   NOT NULL,
+            "currency" VARCHAR(50)   NOT NULL,
+            "launched_date" DATE   NOT NULL,
+            "end_date" DATE   NOT NULL,
+            "category_id" VARCHAR(50)   NOT NULL,
+                FOREIGN KEY (category_id) REFERENCES category(category_id),
+            "subcategory_id" VARCHAR(50)   NOT NULL,
+        FOREIGN KEY (subcategory_id) REFERENCES subcategory     (subcategory_id)
+        );
+
+        SELECT * FROM category;
+        SELECT * FROM subcategory;
+        SELECT * FROM contact;
+        SELECT * FROM campaign;
+
+        CREATE TABLE contact_campaign(
+	        contact_id INT NOT NULL,
+	        FOREIGN KEY (contact_id) REFERENCES contact(contact_id),
+            cf_id INT NOT NULL,
+	        FOREIGN KEY (cf_id) REFERENCES campaign(cf_id),
+	        PRIMARY KEY (contact_id, cf_id)
+        );
+
+        CREATE TABLE category_campaign(
+	        category_id VARCHAR(50) NOT NULL,
+	        FOREIGN KEY (category_id) REFERENCES category(category_id),
+            cf_id INT NOT NULL,
+	        FOREIGN KEY (cf_id) REFERENCES campaign(cf_id),
+	        PRIMARY KEY (category_id, cf_id)
+        );
+
+        CREATE TABLE subcategory_campaign(
+	        subcategory_id VARCHAR(50) NOT NULL,
+	        FOREIGN KEY (subcategory_id) REFERENCES subcategory(subcategory_id),
+            cf_id INT NOT NULL,
+	        FOREIGN KEY (cf_id) REFERENCES campaign(cf_id),
+	        PRIMARY KEY (subcategory_id, cf_id)
+        );
+
+        CREATE TABLE subcategory_category(
+	        subcategory_id VARCHAR(50) NOT NULL,
+	        FOREIGN KEY (subcategory_id) REFERENCES subcategory(subcategory_id),
+            category_id VARCHAR(50) NOT NULL,
+	        FOREIGN KEY (category_id) REFERENCES category(category_id),
+	        PRIMARY KEY (subcategory_id, category_id)
+        );
+
+        INSERT INTO contact_campaign (contact_id, cf_id)
+        SELECT DISTINCT contact_id, cf_id
+        FROM campaign;
+
+        INSERT INTO category_campaign (category_id, cf_id)
+        SELECT DISTINCT category_id, cf_id
+        FROM campaign;
+
+        INSERT INTO subcategory_campaign (subcategory_id, cf_id)
+        SELECT DISTINCT subcategory_id, cf_id
+        FROM campaign;
+
+        INSERT INTO subcategory_category (subcategory_id, category_id)
+        SELECT subcategory.subcategory_id, category.category_id
+        FROM subcategory
+        JOIN (
+        SELECT DISTINCT subcategory_id, category_id
+        FROM campaign
+        ) AS sub_cat
+        ON sub_cat.subcategory_id = subcategory.subcategory_id
+        JOIN category
+        ON sub_cat.category_id = category.category_id;
+
+
+
+<br>
+Because the population process and images are identical for these first for create tables, the images showing their population will be skipped here (refer to the images above in the simple database section).<br>
+Carrying on, there are 4 more tables to show their population:<br><br>
+        Here's the populated 'contact_campaign' table:
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/contact_campaignTablePopulateWithData.png" />
+        <br>
+        <br>
+        <br>
+        Here's the populated 'category_campaign' table:
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/category_campaignTablePopulateWithData.png" />
+        <br>
+        <br>
+        <br>
+        Here's the populated 'subcategory_campaign' table:
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/subcategory_campaignTablePopulateWithData.png" />
+        <br>
+        <br>
+        <br>
+        Here's the populated 'subcategory_category' table:
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/subcategory_categoryTablePopulateWithData.png" />
+        <br>
+        <br>
+        <br>
+        Here's a query that shows the dropping of columns 'subcategory_id' and 'category_id':
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/dropSubcategoryIdAndCategoryId.png" />
+        <br>
+        <br>
+        <br>
+        Here's a query that shows the dropping of column 'contact_id':
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/dropContactId.png" />
+        <br>
+        <br>
+        <br>
+        Here's query that traverses the tables going from 'campaign' to 'subcategory_campaign' to 'subcategory' to 'subcategory_category' to 'category':
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/traverseSchemaCampaignSubcatCat.png" />
+        <br>
+        <br>
+        <br>
+        Here's query that traverses the tables going from 'campaign' to 'category_campaign' to 'category' to 'subcategory_category' to 'subcategory':
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/traverseSchemaCampaignCatSubcat.png" />
+        <br>
+        <br>
+        <br>
+        Here's query that traverses the tables going from 'campaign' to 'contact_campaign' to 'contact':
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/traverseSchemaCampaignContact.png" />
+    </li>
+</ol>
+
+
+## Interesting Findings Using The Alternative Database:
+Here, queries were created to answer three questions:
+<ol>
+    <li>
+        Which country pledged the most?
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/countryPledgedTheMost.png" />
+        <br>
+        <br>
+        <br>
+    </li>
+    <li>
+        Which country started the most campaigns?
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/countryStartedTheMostCampaigns.png" />
+        <br>
+        <br>
+        <br>
+    </li>
+    <li>
+        Which country started the most successful total campaigns?
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/countryTotalSuccesses.png" />
+        <br>
+        <br>
+        <br>
+    </li>
+    <li>
+        Which country was the most realistic with their campaign goals (succeeded most frequently)?
+        <br>
+        <br>
+        <img src="./Database_Files/AlternativeDatabase/countryMostRealisticGoals.png" />
+        <br>
+        <br>
+        <br>
+    </li>
+</ol>
