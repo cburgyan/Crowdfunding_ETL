@@ -486,7 +486,7 @@ With this goal in mind a new Entity-Relationship Diagram and schema could be cre
 
 
 <br>
-Because the population process and images are identical for these first for create tables, the images showing their population will be skipped here (refer to the images above in the simple database section).<br>
+Because the population process and images are identical for these first 4 create tables, the images showing their population will be skipped here (refer to the images above in the simple database section).<br>
 Carrying on, there are 4 more tables to show their population:<br><br>
         Here's the populated 'contact_campaign' table:
         <br>
@@ -592,3 +592,5 @@ Here, queries were created to answer three questions:
         <br>
     </li>
 </ol>
+
+So, as can be seen the alternative database works nicely and it IS future-proofed!!! And is adequate for many more scenarios than the simple database.
